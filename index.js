@@ -10,7 +10,13 @@ server.get("/", (req, res) => {
 
 server.get("/api/users", (req, res) => {
   const users = db.getUsers();
-  res.json(users);
+  if (!users) {
+    res.status(500).json({
+      errorMessage: "The users information could not be retrieved.",
+    });
+  } else {
+    res.json(users);
+  }
 });
 
 server.get("/api/users/:id", (req, res) => {
@@ -19,9 +25,13 @@ server.get("/api/users/:id", (req, res) => {
 
   if (user) {
     res.json(user);
+  } else if (res.err) {
+    res.status(500).json({
+      errorMessage: "The user information could not be retrieved.",
+    });
   } else {
-    res.status(400).json({
-      message: "User not found",
+    res.status(404).json({
+      message: "The user with the specified ID does not exist.",
     });
   }
 });
@@ -29,7 +39,7 @@ server.get("/api/users/:id", (req, res) => {
 // server.post("/api/users", (req, res) => {
 //   if (!req.body.name) {
 //     return res.status(400).json({
-//       message: "Need a user name",
+//       message: "Need a user name.",
 //     });
 //   }
 //   // if (!req.body.id) {
@@ -46,6 +56,8 @@ server.get("/api/users/:id", (req, res) => {
 //   res.status(201).json(newUser);
 // });
 
+server.put("/api/users/:id", (req, res) => {});
+
 server.delete("/api/users/:id", (req, res) => {
   // checking to see if user exists
   const user = db.getUserById(req.params.id);
@@ -53,12 +65,16 @@ server.delete("/api/users/:id", (req, res) => {
     db.deleteUser(user.id);
 
     // can also use status(204) for a success with no feedback / "No Content"
-    return res.status(204).json({
-      message: "User successfully removed",
+    return res.status(201).json({
+      message: "User successfully removed.",
+    });
+  } else if (res.err) {
+    res.status(500).json({
+      errorMessage: "The user could not be removed.",
     });
   } else {
     res.status(404).json({
-      message: "User not found",
+      message: "The user with the specified ID does not exist.",
     });
   }
 });
