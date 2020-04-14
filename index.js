@@ -4,6 +4,7 @@ const shortid = require("shortid");
 
 const server = express();
 
+// this lets you parse JSON request bodies
 server.use(express.json());
 
 server.get("/", (req, res) => {
@@ -44,11 +45,11 @@ server.post("/api/users", (req, res) => {
       message: "Need a user name.",
     });
   }
-  //   // if (!req.body.id) {
-  //   //   return res.status(400).json({
-  //   //     message: "Missing a user Id",
-  //   //   });
-  //   // }
+  // if (!req.body.id) {
+  //   return res.status(400).json({
+  //     message: "Missing a user Id",
+  //   });
+  // }
 
   const newUser = db.createUser({
     // id: shortid,
@@ -58,22 +59,7 @@ server.post("/api/users", (req, res) => {
   res.status(201).json(newUser);
 });
 
-server.put("/api/users/:id", (req, res) => {
-  const user = db.getUserById(req.params.id);
-  if (!user) {
-    res.status(404).json({
-      message: "The user with the specified ID does not exist.",
-    });
-  }
-  // else if (req.body.name || req.body.bio) {
-  // }
-  else {
-    const updatedUser = db.updateUser(user.id, {
-      name: req.body.name || user.name,
-    });
-    res.json(updatedUser);
-  }
-});
+server.put("/api/users/:id", (req, res) => {});
 
 server.delete("/api/users/:id", (req, res) => {
   // checking to see if user exists
